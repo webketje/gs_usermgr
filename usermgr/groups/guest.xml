@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<item>
+    <grant>
+        <permission>access_profile</permission>
+        <permission>access_pages</permission>
+        <permission>access_files</permission>
+        <permission>access_folders</permission>
+    </grant>
+</item>

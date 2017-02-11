@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<item>
+    <extend>admin</extend>
+    <deny>
+        <permission>access_deletefile</permission>
+        <permission>delete_file</permission>
+        <permission>delete_backup</permission>
+        <permission>delete_all_backups</permission>
+        <permission>delete_archive</permission>
+    </deny>
+</item>
