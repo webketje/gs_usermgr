@@ -32,7 +32,7 @@ register_plugin(
     i18n_r('usermgr/plugin_name'),
     '0.1',
     'Kevin Van Lierde',
-    'http://webketje.com',
+    'https://github.com/webketje/gs_usermgr',
     i18n_r('usermgr/plugin_desc'),
     'settings',
     null
@@ -82,13 +82,55 @@ function usermgr_init()
     });
 
     // register standard permissions
-    $standard_permissions = require_once 'usermgr/standard_permissions.php';
-
-    usermgr_plugin_permissions($live_plugins);
+		$standard_permissions = array(
+		
+		    'access_pages', // pages.php
+		    'access_menu-manager', // menu-manager.php
+		    'create_page', // edit.php
+		    'edit_page', // edit.php?id
+		    'edit_page_options', // CSS
+		    'delete_page', // deletefile.php?id
+		
+		    'access_files', // upload.php
+		    'upload_file', // upload.php !empty($_FILES)
+		    'delete_file', // deletefile.php?file
+				'access_folders', // upload.php?path
+		    'create_folder', // upload.php?newfolder
+		    'delete_folder', // deletefile.php?folder
+		
+		    'access_theme', // theme.php
+		    'access_theme-edit', // theme-edit.php
+		    'access_components', // components.php
+		    'create_component', // CSS
+		    'delete_component', // CSS
+		    'access_sitemap', // sitemap.php
+		
+		    'access_backups', // backups.php
+		    'delete_all_backups', // backups.php?deleteall
+		    'delete_backup', // backup-edit.php?p=delete
+		    'restore_backup', // backup-edit.php?p=restore
+		    'access_archives', // archive.php
+		    'create_archive', // archive.php?do
+		    'delete_archive', // deletefile.php?zip
+		
+		    'access_plugins', // plugins.php
+		    'toggle_plugin', // plugins.php?set
+		    'deactivate_plugin', // plugins.php?set + $live_plugins check
+		    'download_plugins', // plugins.php 'Download plugins' sidebar item
+		
+		    'access_support', // support.php
+		    'access_health-check', // health-check.php
+		    'access_settings', // settings.php
+		    'access_profile', // GS 3.4-: CSS, GS 3.4+: profile.php
+		
+		    'access_plugin', // load.php?id
+		);
 
     foreach ($standard_permissions as $perm) {
         $usermgr->permissions->register($perm);
     }
+
+    usermgr_plugin_permissions($live_plugins);
 
     // register additional std. usergroups (editor, developer, manager)
     usermgr_groups($standard_permissions);
@@ -109,7 +151,7 @@ function usermgr_init()
     // if the user XML has no <GROUP> node and a group file with the user's name doesn't exist, the user will be 'admin'
     // so as to make sure not to lock him out.
     $user = $usermgr->get('users', $USR);
-    if (!$user->get('group')) {
+    if (!$user->get('group') || !$usermgr->groups->exists($user->get('group'))) {
         if ($usermgr->groups->exists($user->get('usr')))
             $user->set('group', $user->get('usr'));
         else
@@ -250,7 +292,7 @@ function usermgr_groups($standard_permissions)
     ));
 
     foreach ($rawData as $group) {
-        if (array_key_exists('extends', $group) && array_search($group['extend'], $sortedNames) === false) {
+        if (array_key_exists('extend', $group) && array_search($group['extend'], $sortedNames) === false) {
             array_unshift($sortedGroups, $group);
             array_unshift($sortedNames, $group['name']);
         } else {
@@ -337,7 +379,14 @@ function usermgr_unlink_pages($script)
     return $script;
 }
 
-add_filter('permissions-css', 'usermgr_deny_access_css');
-add_action('plugin-hook', 'usermgr_set_plugin_ids');
 add_action('common', 'usermgr_init');
-add_filter('permissions-js', 'usermgr_unlink_pages');
+add_action('plugin-hook', 'usermgr_set_plugin_ids');
+
+// usermgr.stdaccess.php execs the hooks permissions-css & -js
+require_once 'usermgr/usermgr.stdaccess.php';
+
+add_action('header', 'usermgr_permissions_css');
+add_action('footer', 'usermgr_permissions_js');
+
+add_filter('permissions-css', 'usermgr_deny_access_css');
+add_filter('permissions-js' , 'usermgr_unlink_pages');

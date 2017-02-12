@@ -1,0 +1,7 @@
+# exclude everything except..
+/*
+
+# ..our plugin in the GS plugin dir
+!usermgr.php
+!usermgr/
+!.gitignore

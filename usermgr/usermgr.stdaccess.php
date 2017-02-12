@@ -1,50 +1,6 @@
 <?php /* this file is part of the GS UserMgr plugin package, Copyright (c) 2017  Kevin Van Lierde <kevin.van.lierde@gmail.com> */
 
-$standard_permissions = array(
-
-    'access_pages', // pages.php
-    'access_menu-manager', // menu-manager.php
-    'create_page', // edit.php
-    'edit_page', // edit.php?id
-    'edit_page_options', // CSS
-    'delete_page', // deletefile.php?id
-
-    'access_files', // upload.php
-    'upload_file', // upload.php !empty($_FILES)
-    'delete_file', // deletefile.php?file
-		'access_folders', // upload.php?path
-    'create_folder', // upload.php?newfolder
-    'delete_folder', // deletefile.php?folder
-
-    'access_theme', // theme.php
-    'access_theme-edit', // theme-edit.php
-    'access_components', // components.php
-    'create_component', // CSS
-    'delete_component', // CSS
-    'access_sitemap', // sitemap.php
-
-    'access_backups', // backups.php
-    'delete_all_backups', // backups.php?deleteall
-    'delete_backup', // backup-edit.php?p=delete
-    'restore_backup', // backup-edit.php?p=restore
-    'access_archives', // archive.php
-    'create_archive', // archive.php?do
-    'delete_archive', // deletefile.php?zip
-
-    'access_plugins', // plugins.php
-    'toggle_plugin', // plugins.php?set
-    'deactivate_plugin', // plugins.php?set + $live_plugins check
-    'download_plugins', // plugins.php 'Download plugins' sidebar item
-
-    'access_support', // support.php
-    'access_health-check', // health-check.php
-    'access_settings', // settings.php
-    'access_profile', // GS 3.4-: CSS, GS 3.4+: profile.php
-
-    'access_plugin', // load.php?id
-);
-
-function pages_page_access($current_user, $style) {
+function pages_page_access($style, $current_user) {
     if ($current_user->cannot('create_page')) {
         $style .= '#sb_newpage { display: none; }';
     }
@@ -64,7 +20,7 @@ function pages_page_access($current_user, $style) {
     return $style;
 }
 
-function edit_page_access($current_user, $style) {
+function edit_page_access($style, $current_user) {
     if ($current_user->cannot('create_page')) {
         $style .= '#sb_newpage, #edit #dropdown li a[href*="action=clone"] { display: none; }';
     }
@@ -84,7 +40,7 @@ function edit_page_access($current_user, $style) {
     return $style;
 }
 
-function menumanager_page_access($current_user, $style) {
+function menumanager_page_access($style, $current_user) {
     if ($current_user->cannot('edit_page')) {
         $style .= '#sb_newpage { display: none; }';
     }
@@ -92,7 +48,7 @@ function menumanager_page_access($current_user, $style) {
     return $style;
 }
 
-function upload_page_access($current_user, $style) {
+function upload_page_access($style, $current_user) {
     if ($current_user->cannot('create_folder')) {
         $style .= '#new-folder { display: none; }';
     }
@@ -108,7 +64,7 @@ function upload_page_access($current_user, $style) {
     return $style;
 }
 
-function theme_page_access($current_user, $style) {
+function theme_page_access($style, $current_user) {
     if ($current_user->cannot('access_theme-edit')) {
         $style .= '#sb_themeedit { display: none; }';
     }
@@ -124,7 +80,7 @@ function theme_page_access($current_user, $style) {
     return $style;
 }
 
-function components_page_access($current_user, $style) {
+function components_page_access($style, $current_user) {
     if ($current_user->cannot('access_theme-edit')) {
         $style .= '#sb_themeedit { display: none; }';
     }
@@ -144,7 +100,7 @@ function components_page_access($current_user, $style) {
     return $style;
 }
 
-function backups_page_access($current_user, $style) {
+function backups_page_access($style, $current_user) {
     if ($current_user->cannot('delete_all_backups')) {
         $style .= '.edit-nav  a.confirmation { display: none; }';
     }
@@ -160,7 +116,7 @@ function backups_page_access($current_user, $style) {
     return $style;
 }
 
-function archive_page_access($current_user, $style) {
+function archive_page_access($style, $current_user) {
     if ($current_user->cannot('delete_archive')) {
         $style .= '.delete a.delconfirm { display: none; }';
     }
@@ -168,7 +124,7 @@ function archive_page_access($current_user, $style) {
     return $style;
 }
 
-function backupedit_page_access($current_user, $style) {
+function backupedit_page_access($style, $current_user) {
     if ($current_user->cannot('access_archives')) {
         $style .= '#sb_archives { display: none; }';
     }
@@ -184,7 +140,7 @@ function backupedit_page_access($current_user, $style) {
     return $style;
 }
 
-function plugins_page_access($current_user, $style) {
+function plugins_page_access($style, $current_user) {
     if ($current_user->cannot('toggle_plugin')) {
         $style .= 'td.status, th:last-child { display: none; }';
     }
@@ -196,7 +152,7 @@ function plugins_page_access($current_user, $style) {
     return $style;
 }
 
-function settings_page_access($current_user, $style) {
+function settings_page_access($style, $current_user) {
     if ($current_user->cannot('access_settings')) {
         $style .= '.main > .leftsec:nth-child(2), .main > .rightsec:nth-child(3), .main > h3:first-child, #sb_settings, ';
         $style .= '.main > .leftsec:nth-child(6), .main > p.inline:nth-child(5) { display: none; } #maincontent .main #profile { padding-top: 10px; }';
@@ -204,14 +160,14 @@ function settings_page_access($current_user, $style) {
     return $style;
 }
 
-function healthcheck_page_access($current_user, $style) {
+function healthcheck_page_access($style, $current_user) {
     if ($current_user->cannot('access_support')) {
         $style .= '#sb_support { display: none; }';
     }
     return $style;
 }
 
-function stdPermissionsCSS() {
+function usermgr_permissions_css() {
     $current_user = current_user();
     $current_page = basename(str_replace('-', '', myself(false)), '.php');
     $style = '';
@@ -242,7 +198,7 @@ function stdPermissionsCSS() {
     }
 
     if (myself(false) !== 'load.php' && function_exists($current_page . '_page_access')) {
-        $style = call_user_func_array(str_replace('-', '', $current_page) . '_page_access', array($current_user, $style));
+        $style = call_user_func_array(str_replace('-', '', $current_page) . '_page_access', array($style, $current_user));
     }
 
     $style = exec_filter('permissions-css', $style, $current_user);
@@ -250,7 +206,7 @@ function stdPermissionsCSS() {
     echo '<style>' . $style . ' </style>';
 }
 
-function stdPermissionsJS() {
+function usermgr_permissions_js() {
     $current_user = current_user();
     $current_page = myself(false);
     $script = '';
@@ -265,8 +221,3 @@ function stdPermissionsJS() {
     $script = exec_filter('permissions-js', $script);
     echo '<script type="text/javascript">' . $script . '</script>';
 }
-
-add_action('header', 'stdPermissionsCSS');
-add_action('footer', 'stdPermissionsJS');
-
-return $standard_permissions;
