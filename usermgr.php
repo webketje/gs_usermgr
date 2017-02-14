@@ -82,49 +82,49 @@ function usermgr_init()
     });
 
     // register standard permissions
-		$standard_permissions = array(
-		
-		    'access_pages', // pages.php
-		    'access_menu-manager', // menu-manager.php
-		    'create_page', // edit.php
-		    'edit_page', // edit.php?id
-		    'edit_page_options', // CSS
-		    'delete_page', // deletefile.php?id
-		
-		    'access_files', // upload.php
-		    'upload_file', // upload.php !empty($_FILES)
-		    'delete_file', // deletefile.php?file
-				'access_folders', // upload.php?path
-		    'create_folder', // upload.php?newfolder
-		    'delete_folder', // deletefile.php?folder
-		
-		    'access_theme', // theme.php
-		    'access_theme-edit', // theme-edit.php
-		    'access_components', // components.php
-		    'create_component', // CSS
-		    'delete_component', // CSS
-		    'access_sitemap', // sitemap.php
-		
-		    'access_backups', // backups.php
-		    'delete_all_backups', // backups.php?deleteall
-		    'delete_backup', // backup-edit.php?p=delete
-		    'restore_backup', // backup-edit.php?p=restore
-		    'access_archives', // archive.php
-		    'create_archive', // archive.php?do
-		    'delete_archive', // deletefile.php?zip
-		
-		    'access_plugins', // plugins.php
-		    'toggle_plugin', // plugins.php?set
-		    'deactivate_plugin', // plugins.php?set + $live_plugins check
-		    'download_plugins', // plugins.php 'Download plugins' sidebar item
-		
-		    'access_support', // support.php
-		    'access_health-check', // health-check.php
-		    'access_settings', // settings.php
-		    'access_profile', // GS 3.4-: CSS, GS 3.4+: profile.php
-		
-		    'access_plugin', // load.php?id
-		);
+        $standard_permissions = array(
+        
+            'access_pages', // pages.php
+            'access_menu-manager', // menu-manager.php
+            'create_page', // edit.php
+            'edit_page', // edit.php?id
+            'edit_page_options', // CSS
+            'delete_page', // deletefile.php?id
+        
+            'access_files', // upload.php
+            'upload_file', // upload.php !empty($_FILES)
+            'delete_file', // deletefile.php?file
+            'access_folders', // upload.php?path
+            'create_folder', // upload.php?newfolder
+            'delete_folder', // deletefile.php?folder
+        
+            'access_theme', // theme.php
+            'access_theme-edit', // theme-edit.php
+            'access_components', // components.php
+            'create_component', // CSS
+            'delete_component', // CSS
+            'access_sitemap', // sitemap.php
+        
+            'access_backups', // backups.php
+            'delete_all_backups', // backups.php?deleteall
+            'delete_backup', // backup-edit.php?p=delete
+            'restore_backup', // backup-edit.php?p=restore
+            'access_archives', // archive.php
+            'create_archive', // archive.php?do
+            'delete_archive', // deletefile.php?zip
+        
+            'access_plugins', // plugins.php
+            'toggle_plugin', // plugins.php?set
+            'deactivate_plugin', // plugins.php?set + $live_plugins check
+            'download_plugins', // plugins.php 'Download plugins' sidebar item
+        
+            'access_support', // support.php
+            'access_health-check', // health-check.php
+            'access_settings', // settings.php
+            'access_profile', // GS 3.4-: CSS, GS 3.4+: profile.php
+        
+            'access_plugin', // load.php?id
+        );
 
     foreach ($standard_permissions as $perm) {
         $usermgr->permissions->register($perm);
@@ -192,6 +192,11 @@ function usermgr_init()
 
         // required for accordingly updating the top-level navigation front-end on the unauthorized.php page
         gs_setcookie('GS_LAST_TAB', $page === 'load' ? $page === 'load' : $page);
+        
+        // if basic page access is restricted, look no further
+        if ($user->cannot($primary_permission)) {
+            $usermgr->restrict_access();
+        }
 
         switch ($primary_permission) {
             case 'access_pages':
@@ -200,6 +205,7 @@ function usermgr_init()
                     $usermgr->groups->get($user->get('group'))->grant('access_profile');
                     redirect($SITEURL . $GSADMIN . (version_compare(GSVERSION, '3.3.12', '>') ? '/profile.php' : '/settings.php'));
                 }
+                break;
             case 'create_page':
                 if (isset($_GET['id']) && $user->cannot('edit_page')) {
                     $usermgr->restrict_access();
@@ -258,12 +264,6 @@ function usermgr_init()
                 if ($user->can('access_profile')) {
                     if (version_compare(GSVERSION, '3.3.12', '>'))
                         redirect($SITEURL . $GSADMIN . '/profile.php');
-                }
-                break;
-            default: 
-                // if basic page access is restricted, look no further
-                if ($user->cannot('access_' . $page)) {
-                    $usermgr->restrict_access();
                 }
                 break;
         }

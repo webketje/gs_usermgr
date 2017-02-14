@@ -12,7 +12,6 @@
         <permission>access_backups</permission>
         <permission>access_deletefile</permission>
         <permission>access_menu-manager</permission>
-        <permission>access_profile</permission>
         <permission>access_health-check</permission>
         <permission>access_support</permission>
         <permission>delete_backup</permission>
