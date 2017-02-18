@@ -203,7 +203,7 @@ function usermgr_init()
                 // redirects the user to profile if pages access is restricted
                 if ($user->cannot('access_pages')) {
                     $usermgr->groups->get($user->get('group'))->grant('access_profile');
-                    redirect($SITEURL . $GSADMIN . (version_compare(GSVERSION, '3.3.12', '>') ? '/profile.php' : '/settings.php'));
+                    redirect($SITEURL . $GSADMIN . (file_exists(GSADMINPATH . 'profile.php') ? '/profile.php' : '/settings.php'));
                 }
                 break;
             case 'create_page':
@@ -262,7 +262,7 @@ function usermgr_init()
                 break;
             case 'access_settings':
                 if ($user->can('access_profile')) {
-                    if (version_compare(GSVERSION, '3.3.12', '>'))
+                    if (file_exists(GSADMINPATH . 'profile.php'))
                         redirect($SITEURL . $GSADMIN . '/profile.php');
                 }
                 break;
