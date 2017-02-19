@@ -26,12 +26,15 @@ function edit_page_access($style, $current_user) {
     }
 
     if ($current_user->cannot('access_menu-manager')) {
-        $style .= '#sb_menumanager, [href^="menu-manager"] { display: none; }';
+        $style .= '#sb_menumanager, [href^="menu-manager"], .inline.post-menu { display: none; }';
     }
 
     if ($current_user->cannot('delete_page')) {
         $style .= '#dropdown li.alertme { display: none; }';
     }
+
+    if (!$current_user->is('admin'))
+        $style .= '#post-parent option[value="unauthorized"] { display: none; }';
 
     if (!empty($_GET['id']) && $current_user->cannot('edit_page_options')) {
         $style .= '#metadata_toggle { display: none; }';
