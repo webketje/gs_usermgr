@@ -59,9 +59,14 @@ class UserManager {
       // send out appropriate header
       header($_SERVER['SERVER_PROTOCOL'] . ' 403 Unauthorized');
 
+      // avoid sending an entire 'unauthorized' admin page for AJAX requests
+      if (requestIsAjax())
+        die(i18n_r('usermgr/permission_denied_title'));
+
       // if a custom 'unauthorized' page hasn't been set up in admin/, try to copy the plugin's default
       $dest   = get_admin_path() . 'unauthorized.php';
       $source = GSPLUGINPATH . 'usermgr/unauthorized.php';
+
       if (!file_exists($dest)) {
 
           // if copy fails (e.g. because of directory permissions), fall back to blank page with default message
