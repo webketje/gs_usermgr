@@ -130,10 +130,11 @@ function usermgr_init()
         $usermgr->permissions->register($perm);
     }
 
-    usermgr_plugin_permissions($live_plugins);
+    // allow other plugins to define their own permissions & user groups too
+    exec_action('permissions-hook');
 
-    // register additional std. usergroups (editor, developer, manager)
-    usermgr_groups($standard_permissions);
+    // register std. usergroups (guest, publisher, developer, manager)
+    usermgr_groups($usermgr->get('permissions'));
 
     // automatically grant all permissions to admin
     $usermgr->permissions->on('register', function ($perm, $context) {
@@ -143,9 +144,6 @@ function usermgr_init()
 
     // register default (current) user
     $usermgr->register('users', User::create(User::fetch($USR)));
-
-    // allow other plugins to define their own permissions & user groups too
-    exec_action('permissions-hook');
 
     // if the user XML has no <GROUP> node and a group file with the user's name exists, make him part of his 'single-member-group'
     // if the user XML has no <GROUP> node and a group file with the user's name doesn't exist, the user will be 'admin'
@@ -318,21 +316,22 @@ function usermgr_groups($standard_permissions)
     }
 }
 
+function usermgr_std_permissions()
+{
+    $usermgr = usermgr();
+    $usermgr->register('permissions', array(
+
+    ));
+}
+
 function usermgr_plugin_permissions($live_plugins)
 {
     $usermgr = usermgr();
     $dirpath = GSPLUGINPATH . 'usermgr/permissions/';
 
     foreach ($live_plugins as $plugin => $activated) {
-        if ($activated === 'true' && file_exists($dirpath . basename($plugin))) {
+        if ($activated === 'true' && file_exists($dirpath . basename($plugin)))
             $perms = include_once $dirpath . basename($plugin);
-            if (is_array($perms)) {
-                foreach ($perms as $perm) {
-                    $usermgr->permissions->register($perm);
-                }
-            }
-
-        }
     }
 }
 
@@ -379,8 +378,11 @@ function usermgr_unlink_pages($script)
     return $script;
 }
 
+global $live_plugins;
+
 add_action('common', 'usermgr_init');
 add_action('plugin-hook', 'usermgr_set_plugin_ids');
+add_action('permissions-hook', 'usermgr_plugin_permissions', array($live_plugins));
 
 // usermgr.stdaccess.php execs the hooks permissions-css & -js
 require_once 'usermgr/usermgr.stdaccess.php';
