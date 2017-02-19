@@ -144,7 +144,9 @@ function usermgr_init()
         
         // if basic page access is restricted, look no further
         if ($user->cannot($primary_permission)) {
-            $usermgr->restrict_access();
+            // in GS 3.4- profile is on same page as settings, fall through
+            if ($primary_permission !== 'access_settings')
+                $usermgr->restrict_access();
         }
 
         switch ($primary_permission) {
