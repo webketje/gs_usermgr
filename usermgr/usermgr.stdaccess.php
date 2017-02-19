@@ -168,6 +168,7 @@ function healthcheck_page_access($style, $current_user) {
 }
 
 function usermgr_permissions_css() {
+    global $plugins;
     $current_user = current_user();
     $current_page = basename(str_replace('-', '', myself(false)), '.php');
     $style = '';
@@ -177,9 +178,8 @@ function usermgr_permissions_css() {
         if ($current_user->cannot('access_' . ($p === 'upload' ? 'files' : $p))) {
             $style .= '#nav_' . $p . ' { display: none; }';
         }
-
     }
-
+    
     // right nav pills
     if ($current_user->cannot('access_health-check') && $current_user->cannot('access_support')) {
         $style .= '.nav li.rightnav:last-child { display: none; } .wrapper .nav li.rightnav a.settings { border: none; border-radius: 3px; }';
@@ -199,6 +199,18 @@ function usermgr_permissions_css() {
 
     if (myself(false) !== 'load.php' && function_exists($current_page . '_page_access')) {
         $style = call_user_func_array(str_replace('-', '', $current_page) . '_page_access', array($style, $current_user));
+    }
+
+    // hide plugin sidebars and top nav-tabs if the basic plugin permission is registered
+    foreach($plugins as $hooked_func) {
+        $pluginName = basename(@$hooked_func['file'], '.php');
+        if ($current_user->cannot('access_plugin_' . $pluginName)) {
+            if ($hooked_func['function'] === 'createNavTab')
+                $style .= '#nav_' . $pluginName . ' {display: none; }';
+            else if ($hooked_func['hook'] === $current_page . '-sidebar') {
+                $style .= '#sb_' . $pluginName . ' {display: none; }';
+            }
+        }
     }
 
     $style = exec_filter('permissions-css', $style, $current_user);
