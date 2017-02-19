@@ -81,55 +81,6 @@ function usermgr_init()
         $user->init($context);
     });
 
-    // register standard permissions
-    $standard_permissions = array(
-    
-        'access_pages', // pages.php
-        'access_menu-manager', // menu-manager.php
-        'create_page', // edit.php
-        'edit_page', // edit.php?id
-        'edit_page_options', // CSS
-        'delete_page', // deletefile.php?id
-    
-        'access_files', // upload.php
-        'upload_file', // upload.php !empty($_FILES)
-        'delete_file', // deletefile.php?file
-        'access_folders', // upload.php?path
-        'create_folder', // upload.php?newfolder
-        'delete_folder', // deletefile.php?folder
-    
-        'access_theme', // theme.php
-        'access_theme-edit', // theme-edit.php
-        'access_components', // components.php
-        'create_component', // CSS
-        'delete_component', // CSS
-        'access_sitemap', // sitemap.php
-    
-        'access_backups', // backups.php
-        'delete_all_backups', // backups.php?deleteall
-        'delete_backup', // backup-edit.php?p=delete
-        'restore_backup', // backup-edit.php?p=restore
-        'access_archives', // archive.php
-        'create_archive', // archive.php?do
-        'delete_archive', // deletefile.php?zip
-    
-        'access_plugins', // plugins.php
-        'toggle_plugin', // plugins.php?set
-        'deactivate_plugin', // plugins.php?set + $live_plugins check
-        'download_plugins', // plugins.php 'Download plugins' sidebar item
-    
-        'access_support', // support.php
-        'access_health-check', // health-check.php
-        'access_settings', // settings.php
-        'access_profile', // GS 3.4-: CSS, GS 3.4+: profile.php
-    
-        'access_plugin', // load.php?id
-    );
-
-    foreach ($standard_permissions as $perm) {
-        $usermgr->permissions->register($perm);
-    }
-
     // allow other plugins to define their own permissions & user groups too
     exec_action('permissions-hook');
 
@@ -316,21 +267,13 @@ function usermgr_groups($standard_permissions)
     }
 }
 
-function usermgr_std_permissions()
-{
-    $usermgr = usermgr();
-    $usermgr->register('permissions', array(
-
-    ));
-}
-
-function usermgr_plugin_permissions($live_plugins)
+function usermgr_permissions($live_plugins)
 {
     $usermgr = usermgr();
     $dirpath = GSPLUGINPATH . 'usermgr/permissions/';
 
     foreach ($live_plugins as $plugin => $activated) {
-        if ($activated === 'true' && file_exists($dirpath . basename($plugin)))
+        if ($activated === 'true' && file_exists($dirpath . basename($plugin))) 
             $perms = include_once $dirpath . basename($plugin);
     }
 }
@@ -382,7 +325,7 @@ global $live_plugins;
 
 add_action('common', 'usermgr_init');
 add_action('plugin-hook', 'usermgr_set_plugin_ids');
-add_action('permissions-hook', 'usermgr_plugin_permissions', array($live_plugins));
+add_action('permissions-hook', 'usermgr_permissions', array($live_plugins));
 
 // usermgr.stdaccess.php execs the hooks permissions-css & -js
 require_once 'usermgr/usermgr.stdaccess.php';
