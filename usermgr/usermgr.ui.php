@@ -2,19 +2,19 @@
 
 <div class="edit-nav clearfix">
   <a href="javascript:void(0)" id="view-permissions">
-     <span><?php i18n('users_ui/label_permissions'); ?></span>
+     <span><?php i18n('users_ui/label_permissions');?></span>
   </a>
   <a href="javascript:void(0)" id="view-groups">
-     <span><?php i18n('users_ui/label_groups'); ?></span>
+     <span><?php i18n('users_ui/label_groups');?></span>
   </a>
   <a href="javascript:void(0)" id="view-users" class="current">
-     <span><?php i18n('users_ui/label_users'); ?></span>
+     <span><?php i18n('users_ui/label_users');?></span>
   </a>
 </div>
 
   <a href="javascript:void(0)" id="btn-add" accesskey="a">
-     <span><?php i18n('users_ui/btn_add_user'); ?></span>
-     <span style="display: none;"><?php i18n('users_ui/btn_add_group'); ?></span>
+     <span><?php i18n('users_ui/btn_add_user');?></span>
+     <span style="display: none;"><?php i18n('users_ui/btn_add_group');?></span>
   </a>
 <table class="edittable">
 	<thead>

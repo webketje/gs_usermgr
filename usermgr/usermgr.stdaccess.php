@@ -1,6 +1,7 @@
 <?php /* this file is part of the GS UserMgr plugin package, Copyright (c) 2017  Kevin Van Lierde <kevin.van.lierde@gmail.com> */
 
-function pages_page_access($style, $current_user) {
+function pages_page_access($style, $current_user)
+{
     if ($current_user->cannot('create_page')) {
         $style .= '#sb_newpage { display: none; }';
     }
@@ -20,7 +21,8 @@ function pages_page_access($style, $current_user) {
     return $style;
 }
 
-function edit_page_access($style, $current_user) {
+function edit_page_access($style, $current_user)
+{
     if ($current_user->cannot('create_page')) {
         $style .= '#sb_newpage, #edit #dropdown li a[href*="action=clone"] { display: none; }';
     }
@@ -33,8 +35,9 @@ function edit_page_access($style, $current_user) {
         $style .= '#dropdown li.alertme { display: none; }';
     }
 
-    if (!$current_user->is('admin'))
+    if (!$current_user->is('admin')) {
         $style .= '#post-parent option[value="unauthorized"] { display: none; }';
+    }
 
     if (!empty($_GET['id']) && $current_user->cannot('edit_page_options')) {
         $style .= '#metadata_toggle { display: none; }';
@@ -43,7 +46,8 @@ function edit_page_access($style, $current_user) {
     return $style;
 }
 
-function menumanager_page_access($style, $current_user) {
+function menumanager_page_access($style, $current_user)
+{
     if ($current_user->cannot('edit_page')) {
         $style .= '#sb_newpage { display: none; }';
     }
@@ -51,7 +55,8 @@ function menumanager_page_access($style, $current_user) {
     return $style;
 }
 
-function upload_page_access($style, $current_user) {
+function upload_page_access($style, $current_user)
+{
     if ($current_user->cannot('create_folder')) {
         $style .= '#new-folder { display: none; }';
     }
@@ -67,7 +72,8 @@ function upload_page_access($style, $current_user) {
     return $style;
 }
 
-function theme_page_access($style, $current_user) {
+function theme_page_access($style, $current_user)
+{
     if ($current_user->cannot('access_theme-edit')) {
         $style .= '#sb_themeedit { display: none; }';
     }
@@ -83,7 +89,8 @@ function theme_page_access($style, $current_user) {
     return $style;
 }
 
-function components_page_access($style, $current_user) {
+function components_page_access($style, $current_user)
+{
     if ($current_user->cannot('access_theme-edit')) {
         $style .= '#sb_themeedit { display: none; }';
     }
@@ -103,7 +110,8 @@ function components_page_access($style, $current_user) {
     return $style;
 }
 
-function backups_page_access($style, $current_user) {
+function backups_page_access($style, $current_user)
+{
     if ($current_user->cannot('delete_all_backups')) {
         $style .= '.edit-nav  a.confirmation { display: none; }';
     }
@@ -119,7 +127,8 @@ function backups_page_access($style, $current_user) {
     return $style;
 }
 
-function archive_page_access($style, $current_user) {
+function archive_page_access($style, $current_user)
+{
     if ($current_user->cannot('delete_archive')) {
         $style .= '.delete a.delconfirm { display: none; }';
     }
@@ -127,7 +136,8 @@ function archive_page_access($style, $current_user) {
     return $style;
 }
 
-function backupedit_page_access($style, $current_user) {
+function backupedit_page_access($style, $current_user)
+{
     if ($current_user->cannot('access_archives')) {
         $style .= '#sb_archives { display: none; }';
     }
@@ -143,7 +153,8 @@ function backupedit_page_access($style, $current_user) {
     return $style;
 }
 
-function plugins_page_access($style, $current_user) {
+function plugins_page_access($style, $current_user)
+{
     if ($current_user->cannot('toggle_plugin')) {
         $style .= 'td.status, th:last-child { display: none; }';
     }
@@ -155,7 +166,8 @@ function plugins_page_access($style, $current_user) {
     return $style;
 }
 
-function settings_page_access($style, $current_user) {
+function settings_page_access($style, $current_user)
+{
     if ($current_user->cannot('access_settings')) {
         $style .= '.main > .leftsec:nth-child(2), .main > .rightsec:nth-child(3), .main > h3:first-child, #sb_settings, ';
         $style .= '.main > .leftsec:nth-child(6), .main > p.inline:nth-child(5) { display: none; } #maincontent .main #profile { padding-top: 10px; }';
@@ -163,26 +175,28 @@ function settings_page_access($style, $current_user) {
     return $style;
 }
 
-function healthcheck_page_access($style, $current_user) {
+function healthcheck_page_access($style, $current_user)
+{
     if ($current_user->cannot('access_support')) {
         $style .= '#sb_support { display: none; }';
     }
     return $style;
 }
 
-function usermgr_permissions_css() {
+function usermgr_permissions_css()
+{
     global $plugins;
     $current_user = current_user();
     $current_page = basename(str_replace('-', '', myself(false)), '.php');
-    $style = '';
+    $style        = '';
     // top-level nav tabs
     $nav_tabs = array('pages', 'upload', 'backups', 'theme', 'plugins');
     foreach ($nav_tabs as $p) {
-        if ($current_user->cannot('access_' . ($p === 'upload' ? 'files' : $p))) {
+        if ($current_user->cannot('access_' . ('upload' === $p ? 'files' : $p))) {
             $style .= '#nav_' . $p . ' { display: none; }';
         }
     }
-    
+
     // right nav pills
     if ($current_user->cannot('access_health-check') && $current_user->cannot('access_support')) {
         $style .= '.nav li.rightnav:last-child { display: none; } .wrapper .nav li.rightnav a.settings { border: none; border-radius: 3px; }';
@@ -205,12 +219,12 @@ function usermgr_permissions_css() {
     }
 
     // hide plugin sidebars and top nav-tabs if the basic plugin permission is registered
-    foreach($plugins as $hooked_func) {
+    foreach ($plugins as $hooked_func) {
         $pluginName = basename(@$hooked_func['file'], '.php');
         if ($current_user->cannot('access_plugin_' . $pluginName)) {
-            if ($hooked_func['function'] === 'createNavTab')
+            if ('createNavTab' === $hooked_func['function']) {
                 $style .= '#nav_' . $pluginName . ' {display: none; }';
-            else if ($hooked_func['hook'] === $current_page . '-sidebar') {
+            } else if ($current_page . '-sidebar' === $hooked_func['hook']) {
                 $style .= '#sb_' . $pluginName . ' {display: none; }';
             }
         }
@@ -221,10 +235,11 @@ function usermgr_permissions_css() {
     echo '<style>' . $style . ' </style>';
 }
 
-function usermgr_permissions_js() {
+function usermgr_permissions_js()
+{
     $current_user = current_user();
     $current_page = myself(false);
-    $script = '';
+    $script       = '';
 
     if ('settings.php' === $current_page && $current_user->cannot('access_settings')) {
         $script .= 'document.querySelector(\'#sb_settingsprofile a\').className += \' current\';';
